@@ -1,0 +1,752 @@
+#include <stdio.h>  // Bibliothèque principale.
+#include <string.h> // Permet d'utiliser principalement la fonction strcmp.
+#include <unistd.h> // Juste pour le loading du programme.
+#include <ctype.h>  // Sert à la fonction tolower, pour accepter les entrées en majuscules.
+
+#define MAX_SIZE 20 
+
+
+// Définition de la structure pour stocker les informations d'un profil.
+typedef struct {
+ 
+  char nom[MAX_SIZE];
+  char prenom[MAX_SIZE];
+
+  } Profile;
+
+
+// Définition de la structure pour stocker les informations d'un produit.
+typedef struct {
+  
+  int ref; 
+  int quantite; 
+  int prix;
+  char nom[MAX_SIZE];
+  char taille[MAX_SIZE];
+  char typ[MAX_SIZE];
+
+  } Produit;
+
+
+
+
+// Fonction pour déterminer si l'utilisateur est un employé ou un client, fonction principale du programme !
+void EmployeeOrClient() {
+  
+  char type[MAX_SIZE]; 
+  char client[MAX_SIZE];
+  int mdp;
+
+  // Demande à l'utilisateur s'il est un employé ou un client.
+  printf("Are you an employee or a client ?\n"); 
+  scanf("%s", type); // Récupère la réponse type.
+
+  // Convertit la chaîne de caractères en minuscules pour faciliter la comparaison.
+  for (int i = 0; type[i]; i++){ 
+    type[i] = tolower(type[i]); 
+  }
+
+  // Si l'utilisateur est un employé.
+  if (strcmp(type, "employee") == 0) {
+    printf("Type in the password :\n"); // Demande à l'utilisateur de saisir le mot de passe.
+    scanf("%d", &mdp); // Récupère la réponse du mdp.
+
+    // Vérifie si le mot de passe est correct.
+    if (mdp == 1234) {
+      printf("\n"); // Esapce pour améliorer l'interface.
+      printf("Your password is correct, access granted !\n"); // Affiche donc que le mot de passe est correct.
+      switchcase (); // Fonction qui amène aux options employee.
+    }
+    
+    // Si le mot de passe est incorrect.
+    else {
+      printf("Invalid password, please try again or log in as a client \n"); // Affiche que le mot de passe est incorrect.
+      EmployeeOrClient(); // Recommence le programme au début.
+    }
+  } 
+  
+  // Si l'utilisateur est un client.
+  else if (strcmp(type, "client") == 0 ) {
+    printf("Are you a new client?\n"); // Demande à l'utilisateur si il est nouveau client ou non.
+    scanf(" %s", client ); // Récupère la réponse client.
+    
+    // Convertit la chaîne de caractères en minuscules pour faciliter la comparaison.
+    for (int i = 0; client[i]; i++){
+    client[i] = tolower(client[i]);
+  }
+
+    // Si l'utilisateur est un nouveau client
+    if (strcmp(client, "yes") == 0) {
+      Profile nouveau_client; // Amène le typedef struct Profile, pour un nouveau client.
+      printf("\n"); // Esapce pour améliorer l'interface.
+      printf("Familly name : "); // Pour que l'utilisateur écrive son nom de famille.
+      scanf("%s", nouveau_client.nom); // Récupère la réponse du nom de famille relié au typedef struct profile pour un nouveau client.
+      printf("First name: "); // Pour que l'utilisateur écrive son prénom.
+      scanf("%s", nouveau_client.prenom); // Récupère la réponse du prénom relié au typedef struct profile pour un nouveau client.
+      printf("\n"); // Esapce pour améliorer l'interface.
+      printf("Profile has been created for %s %s.\n", nouveau_client.prenom, nouveau_client.nom); // Affiche que le nom de famille et le prénom ont bien été pris en compte en les ré-affichant.
+
+      // Ouverture du fichier en mode écriture.
+      FILE *fichier_clients = fopen("clients.txt", "a");
+      
+      // Si le fichier s'ouvre bien..
+      if (fichier_clients != NULL) {
+        // Écriture du nom et du prénom dans le fichier.
+        fprintf(fichier_clients, "%s %s\n", nouveau_client.prenom, nouveau_client.nom); // Enregistre le nom de famille et le prénom de l'utilisateur pris compte avant.
+        fclose(fichier_clients); // Fermeture du fichier.
+        switchcase2 (); // Fonction qui amène aux options employee.
+      }
+
+      // Si le fichier ne s'ouvre pas bien..  
+      else {
+        printf("Error opening file clients.txt has occurred \n"); // Msg d'erreur si le fichier ne s'ouvre pas.
+      }
+    } 
+    
+    // Si l'utilisateur est déjà connu.
+    else if (strcmp(client, "no") == 0) {
+      Profile client_exist; // Amène le typedef struct client, pour les client existants.
+      printf("\n"); // Esapce pour améliorer l'interface.
+      printf("Familly name : "); // Pour que l'utilisateur écrive son nom de famille.
+      scanf("%s", client_exist.nom); // Récupère la réponse du nom de famille.
+      printf("First name : "); // Pour que l'utilisateur écrive son prénom.
+      scanf("%s", client_exist.prenom); // Récupère la réponse du prénom.
+      printf("\n"); // Esapce pour améliorer l'interface.
+      printf("Profil trouvé pour %s %s. Faux jsp comment faire\n", client_exist.prenom, client_exist.nom); // Affiche que le nom de famille et le prénom ont bien été trouvés dans le fichier clients.
+      switchcase2 (); // Ramène la fonction qui affiche les options pour le client.
+    }
+
+    // Si mauvaise réponse.
+    else {
+      printf("\n"); // Esapce pour améliorer l'interface.
+      printf("Try again with the following spelling 'yes' or 'no'.\n"); // Dit à l'utilisateur de réessayer avec le bon orthographe.
+      EmployeeOrClient(); // Amène la fonction qui redémarre le programme au début.
+    }
+  }
+
+  // Si mauvaise réponse.
+  else {
+    printf("\n"); // Esapce pour améliorer l'interface.
+    printf("Try again while using the followings: 'employee' or 'client'.\n"); // Dit à l'utilisateur de réessayer avec le bon orthographe.
+    printf("\n"); // Espace pour améliorer l'interface.
+    EmployeeOrClient(); // Amène la fonction qui redémarre le programme au début. 
+  }
+
+}
+
+
+
+
+// Fonction qui demande si l'utilisateur veut relancer le programme au choix des options dans le switch case 1 dédié aux employee.
+int RestartChoice () {
+  
+  char restart[MAX_SIZE];
+  
+  printf("\n"); // Esapce pour améliorer l'interface.
+  printf("Would you like to do something else ?\n"); // Demande à l'utilisateur si il souhaite revenir aux options.
+  scanf("%s" , restart); // Récupère sa réponse restart.
+
+  // Convertit la chaîne de caractères en minuscules pour faciliter la comparaison.
+  for (int i = 0; restart[i]; i++){ 
+    restart[i] = tolower(restart[i]); 
+  }
+
+  // Si l'utilisateur veut revenir aux choix des options.
+  if (strcmp(restart, "yes") == 0) {
+    switchcase (); // Amène la fonction des choix des options dédié aux employee.
+  }
+    
+  // Si l'utilisateur ne veut pas alors ..
+  else if (strcmp(restart, "no") == 0) {
+    printf("\n"); // Esapce pour améliorer l'interface.
+    printf("\n"); // Esapce pour améliorer l'interface.
+    EmployeeOrClient(); // Amène la fonction qui ramène le programme au début.
+  }
+  
+  // Si l'utilisateur n'a pas utilisé le bon orthographe.
+  else {
+    printf("Try again while using the followings: 'yes' or 'no'.\n"); // Affiche donc l'utilisateur n'a pas écriyt le bon orthographe.
+    RestartChoice(); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+  }
+}
+
+
+
+
+// Fonction qui demande pour relancer le programme au choix des options dans le switch case 2 dédié aux clients.
+int RestartChoice2 () {
+  
+  char restart[MAX_SIZE];
+  
+  printf("\n"); // Esapce pour améliorer l'interface.
+  printf("Would you like to do something else ?\n"); // Demande à l'utilisateur s'il veut revenir aux choix des options. 
+  scanf("%s" , restart); // Récupère sa réponse.
+
+  // Convertit la chaîne de caractères en minuscules pour faciliter la comparaison.
+  for (int i = 0; restart[i]; i++){ 
+    restart[i] = tolower(restart[i]); 
+  }
+    
+  // Si l'utilisateur veut revenir aux choix des options.
+  if (strcmp(restart, "yes") == 0) {
+    switchcase2 (); // Amène la fonction des choix des options.
+  }
+  
+  // Si l'utilisateur ne veut pas revenir aux choix des options.
+  else if (strcmp(restart, "no") == 0) {
+    printf("\n"); // Esapce pour améliorer l'interface.
+    printf("\n"); // Esapce pour améliorer l'interface.
+    EmployeeOrClient(); // Amène la fonction qui redémarre le programme au début.
+  }
+  
+  // Si l'utilisateur n'a pas utiliser le bon orthopgraphe.
+  else {
+    printf("Try again while using the followings: 'yes' or 'no'.\n"); // Affiche à l'utilisateur qu'il n'a pas utiliser le bon orthographe.
+    RestartChoice2(); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+  }
+}
+
+
+
+
+// Fonction qui affiche le choix des options pour les client.
+int switchcase2 () {
+  
+  int choix;
+  
+  printf("\n"); // Esapce pour améliorer l'interface.
+  printf("What do you want to do ?\n"); // Demande à l'utilisateur ce qu'il veut faire.
+  printf("  1) See the products\n"); // Affiche l'option 1.
+  printf("  2) Buy something.\n"); // Affiche l'option 2.
+  printf("  3) See your profile.\n"); // Affiche l'option 3.
+  printf("  4) Delete your profile.\n"); // Affiche l'option 4.
+  printf("  5) Quit !\n"); // Affiche l'option 5.
+  scanf("%d", &choix ); // Demande à l'utilisateur de saisir un choix.
+
+    // En fonction du choix de l'utilisateur, exécute plusieurs fonctions amenant au résultat voulu.
+    switch(choix) {
+      case 1: // Exécute le choix 1.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        printf("Fonction non implémentée."); // A MODIFIER
+        printf("\n"); // Esapce pour améliorer l'interface.
+        RestartChoice2 (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+        break; // Pour arrêter l'execution du choix 1.
+      case 2: // Exécute le choix 2.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        printf("Fonction non implémentée."); // A MODIFIER
+        printf("\n"); // Esapce pour améliorer l'interface.
+        RestartChoice2 (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+        break; // Pour arrêter l'execution du choix 2.
+      case 3: // Exécute le choix 3.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        printf("Fonctionnalité non implémentée."); // A MODIFIER
+        printf("\n"); // Esapce pour améliorer l'interface.
+        RestartChoice2 (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+        break; // Pour arrêter l'execution du choix 3.
+      case 4: // Exécute le choix 4.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        printf("Fonction non implémentée"); // A MODIFIER
+        printf("\n"); // Esapce pour améliorer l'interface.
+        RestartChoice2 (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+        break; // Pour arrêter l'execution du choix 4.
+      case 5: // Exécute le choix 5, qui va relancer le programme au début.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        printf("Fonctionnalité non implémentée."); // A MODIFIER
+        printf("\n"); // Esapce pour améliorer l'interface.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        RestartChoice2 (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+        break; // Pour arrêter l'execution du choix 5.
+      default: // Exécute le choix autres, qui va relancer le programme d'affichage des choix.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        printf("Invalid choice, please try again.\n"); // Affiche que le choix saisi n'est pas compris dans les choix affichés.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        printf("\n"); // Esapce pour améliorer l'interface.
+        switchcase2() ; // Amène qui la fonction qui relan,ce l'affiche des options.
+        break; // Pour arrêter le switch case 2.
+    }
+}
+
+
+
+
+// Fonction qui affiche le choix des options pour les employee.
+int switchcase () {
+  
+  int choix;
+  
+  printf("\n"); // Esapce pour améliorer l'interface.
+  printf("What do you want to do ?\n"); // Demande à l'utilisateur ce qu'il veut faire.
+  printf("  1) Display the list of clients.\n"); // Affiche l'option 1.
+  printf("  2) Show products.\n"); // Affiche l'option 2.
+  printf("  3) Show soon-to-be-null products.\n"); // Affiche l'option 3.
+  printf("  4) Add a product.\n"); // Affiche l'option 4.
+  printf("  5) Modify a product.\n"); // Affiche l'option 5.
+  printf("  6) Delete a product.\n"); // Affiche l'option 6.
+  printf("  7) Quit !\n"); // Affiche l'option 7.
+  scanf("%d", &choix ); // Demande à l'utilisateur de saisir un choix.
+
+  // En fonction du choix de l'utilisateur, appelle une fonction
+    switch(choix) {
+      case 1: // Exécute le choix 1.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          ChoiceReadAllClient(); // Amène la fonction qui va exécuter la demande du choix 1.
+          RestartChoice (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+          break; // Pour arrêter l'execution du choix 1.
+      case 2: // Exécute le choix 2.
+          ChoiceShowAllProduit(); // Amène la fonction qui va exécuter la demande du choix 1.
+          RestartChoice (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+          break; // Pour arrêter l'execution du choix 2.
+      case 3: // Exécute le choix 3.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          printf("Fonctionnalité non implémentée."); // A MODIFIER
+          printf("\n"); // Esapce pour améliorer l'interface.
+          RestartChoice (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+          break; // Pour arrêter l'execution du choix 3.
+      case 4: // Exécute le choix 4.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          AddProduit ();  // Amène la fonction qui va exécuter la demande du choix 1.
+          RestartChoice (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+          break; // Pour arrêter l'execution du choix 4.
+      case 5: // Exécute le choix 5.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          ModifyProducts();
+          printf("\n"); // Esapce pour améliorer l'interface.
+          RestartChoice (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+          break; // Pour arrêter l'execution du choix 5.
+      case 6: // Exécute le choix 6.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          DeleteProduit ();
+          printf("\n"); // Esapce pour améliorer l'interface.
+          RestartChoice (); // Amène la fonction qui demande si l'utilisateur veut revenir au choix des options.
+          break; // Pour arrêter l'execution du choix 6.
+      case 7: // Exécute le choix 7, qui va relancer le programme au début.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          printf("Goodbye!\n"); // Affiche au revoir.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          EmployeeOrClient(); // Amène la fonction qui redémarre le programme au début.
+          break; // Pour arrêter l'execution du choix 7.
+      default: // Exécute le choix autres, qui va exécuter la fonction qui redémarre le programme d'affichage des choix.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          printf("Invalid choice, please try again.\n"); // Affiche que le choix choisi n'est pas compris dans les choix affichés.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          printf("\n"); // Esapce pour améliorer l'interface.
+          switchcase() ; // Amène la fonction qui relancer l'affichage des options.
+          break; // Pour arrêter le switch case 1.
+    }
+}
+
+
+
+
+
+// Fonction pour le choix 1 employee, lire la liste des clients.
+int ChoiceReadAllClient () {
+
+  printf("The list of clients is the following :\n"); // Affiche un message d'intro pour dire la liste des clients.
+
+    // Ouvre le fichier des clients existants.
+    FILE *fichier = fopen("clients.txt", "r"); // Ouvre le fichier.
+
+    // Si le fichier ne s'ouvre pas ..
+    if (fichier == NULL) {
+      printf("\n"); // Espace pour améliorer l'interface
+      printf("Error opening file.\n"); // Affiche un message d'erreur si le fichier ne s'ouvre pas.
+      return 1; // return 1.
+    }
+
+  Profile client; // Amène le typedef struct client, pour clients.
+
+  // Instructions ci-dessous.
+  while (fscanf(fichier, "%s %s", client.nom, client.prenom) != EOF) {
+    printf("  Nom: %s, Prénom: %s\n", client.nom, client.prenom); // Affiche les noms de famille et prénoms. 
+  } // Boucle while qui lit les informations stockées dans le fichier "clients.txt" ligne par ligne. La fonction fscanf() lit une ligne à chaque itération de la boucle, et stocke les valeurs lues dans les variables nom et prenom, respectivement. L'expression "!= EOF" est utilisée pour vérifier si la fin du fichier a été atteinte. EOF (End of File) est une constante définie dans la bibliothèque standard C qui est renvoyée lorsque la fin d'un fichier est atteinte. La boucle while continue de s'exécuter jusqu'à ce que fscanf() atteigne la fin du fichier et renvoie EOF, ce qui met fin à la boucle.
+    fclose(fichier); // Fermeture du fichier.
+  return 0; // return 0.
+}
+
+
+
+
+// Fonction pour le choix 2 employee, lire la liste des produits.
+int ChoiceShowAllProduit () {
+
+  char type[MAX_SIZE];
+  
+  printf("\n"); // Espace pour améliorer l'interface.
+  printf("Would you like to see what types of fragrances ?\n"); // Demande à l'utilisateur quel type de parfums veut-il afficher.
+  printf("- Men's Fragrance\n");
+  printf("- Women's Fragrance\n");
+  printf("- Unisexe Fragrance\n");
+  printf("\n");
+  scanf("%s" , type); // Récupère sa réponse type.
+
+  // Convertit la chaîne de caractères en minuscules pour faciliter la comparaison.
+  for (int i = 0; type[i]; i++){
+    type[i] = tolower(type[i]);
+  }
+
+  // Si le cas choisi est MEN.
+  if (strcmp(type, "men") == 0 || strcmp(type, "mens") == 0 || strcmp(type, "men fragrance") == 0 || strcmp(type, "mens fragrance") == 0 || strcmp(type, "men's fragrance") == 0) {
+    
+      // Ouvre le fichier des produits hommes.
+      FILE *fichier = fopen("produit.txt", "r");
+    
+    // Si le fichier s'ouvre pas ..
+    if (fichier == NULL) {
+      printf("\n"); // Espace pour améliorer l'interface.
+      printf("Error opening file.\n"); // Affiche un message d'erreur si le fichier ne s'ouvre pas.
+      return 1; // return 1.
+    }
+  
+  Produit produit; // Amène le typedef struct Produit pour produits.
+
+    // Instructions ci-dessous.
+    while (fscanf(fichier, "%s %d %s %d %d %s", produit.nom, &produit.prix, produit.taille, &produit.quantite, &produit.ref, produit.typ) != EOF) { //  l'opérateur '&' est utilisé pour obtenir l'adresse d'une variable, nécessaire pour écrire des valeurs à cette adresse en mémoire. Pour les tableaux, le nom du tableau représente déjà l'adresse de sa première cellule de mémoire, il n'est donc pas nécessaire d'utiliser l'opérateur '&' lors de la lecture ou de l'écriture de données dans un tableau.
+
+      // Affiche uniquement le genre "men".
+      if (strcmp(produit.typ, "men") == 0) {
+        printf("\n Nom: %s\n Prix: %d€\n Taille: %s\n Quantité: %d\n Référence: %d\n Genre: %s\n", produit.nom, produit.prix, produit.taille, produit.quantite, produit.ref, produit.typ); // Affiche les produits.
+      }
+    }
+  }
+
+  // Si le cas choisi est WOMEN.
+  else if (strcmp(type, "women") == 0 || strcmp(type, "womens") == 0 || strcmp(type, "womens fragrance") == 0 || strcmp(type, "women fragrance") == 0 || strcmp(type, "women's fragrance") == 0) {
+    
+      // Ouvre le fichier des produits femmes.
+      FILE *fichier = fopen("produit.txt", "r");
+    
+    // Si le fichier s'ouvre pas ..
+    if (fichier == NULL) {
+      printf("\n"); // Espace pour améliorer l'interface.
+      printf("Error opening file.\n"); // Affiche un message d'erreur si le fichier ne s'ouvre pas.
+      return 1; // return 1.
+    }
+  
+  Produit produit; // Amène le typedef struct Produit pour produits.
+  
+    // Instructions ci-dessous.
+    while (fscanf(fichier, "%s %d %s %d %d %s", produit.nom, &produit.prix, produit.taille, &produit.quantite, &produit.ref, produit.typ) != EOF) { //  l'opérateur '&' est utilisé pour obtenir l'adresse d'une variable, nécessaire pour écrire des valeurs à cette adresse en mémoire. Pour les tableaux, le nom du tableau représente déjà l'adresse de sa première cellule de mémoire, il n'est donc pas nécessaire d'utiliser l'opérateur '&' lors de la lecture ou de l'écriture de données dans un tableau.
+
+      // Affiche uniquement le genre women.
+      if (strcmp(produit.typ, "women") == 0) {
+        printf("\n Nom: %s\n Prix: %d€\n Taille: %s\n Quantité: %d\n Référence: %d\n Genre: %s\n", produit.nom, produit.prix, produit.taille, produit.quantite, produit.ref, produit.typ); // Affiche les produits.
+      }
+    }
+  }
+  
+  // Si le cas choisi est UNISEXE.
+  else if (strcmp(type, "unisexe") == 0 || strcmp(type, "unisex") == 0 || strcmp(type, "unisexe fragrance") == 0 || strcmp(type, "unisex fragrance") == 0) {
+      
+      // Ouvre le fichier des produits unisexe.
+      FILE *fichier = fopen("produit.txt", "r");
+    
+    // Si le fichier s'ouvre pas ..
+    if (fichier == NULL) {
+      printf("\n"); // Espace pour améliorer l'interface.
+      printf("Error opening file.\n"); // Affiche un message d'erreur si le fichier ne s'ouvre pas.
+      return 1; // return 1.
+    }
+  
+  Produit produit; // Amène le typedef struct Produit pour produits.
+  
+    // Instructions ci-dessous.
+    while (fscanf(fichier, "%s %d %s %d %d %s", produit.nom, &produit.prix, produit.taille, &produit.quantite, &produit.ref, produit.typ) != EOF) { //  l'opérateur '&' est utilisé pour obtenir l'adresse d'une variable, nécessaire pour écrire des valeurs à cette adresse en mémoire. Pour les tableaux, le nom du tableau représente déjà l'adresse de sa première cellule de mémoire, il n'est donc pas nécessaire d'utiliser l'opérateur '&' lors de la lecture ou de l'écriture de données dans un tableau.
+
+      // Affiche uniquement le genre unisexe.
+      if (strcmp(produit.typ, "unisexe") == 0) {
+    printf("\n Nom: %s\n Prix: %d€\n Taille: %s\n Quantité: %d\n Référence: %d\n Genre: %s\n", produit.nom, produit.prix, produit.taille, produit.quantite, produit.ref, produit.typ); // Affiche les produits.
+      }
+    }
+  }
+
+  // Si l'utilisateur a fait une erreur de saisie.
+  else {
+    printf("Try again while using the followings: 'Mens' or 'Womens' or 'Unisexe'.\n"); // Demande à l'utilisateur de réessayer avec le bon orthographe.
+    ChoiceShowAllProduit () ; // Amène la fonction qui redémarre le programme de choix 2, d'affichage des produits.
+  }
+}
+
+
+
+
+
+
+// Fonction pour le choix 3 employee, montre les produits bientôt manquants.
+int ShowLessProduit () {
+  
+  return 0; // return 0.
+}
+
+
+
+
+// Fonction pour le choix 4 employee, pour ajouter un produit.
+int AddProduit () {
+  
+  char type[MAX_SIZE];
+  
+  printf("Do you add Men's fragrance, Women's fragrance, or Unisex fragrance ?\n"); // Demande quel type de parfums veuit-il ajouter.
+  scanf("%s" , type); // Récupère la réponse type.
+
+  // Convertit la chaîne de caractères en minuscules pour faciliter la comparaison.
+  for (int i = 0; type[i]; i++){ 
+    type[i] = tolower(type[i]); 
+  }
+
+  // Si le parfums choisi est un parfums d'homme ..
+  if (strcmp(type, "men's fragrance") == 0 || strcmp(type, "mens fragrance") == 0 || strcmp(type, "mens") == 0 || strcmp(type, "men") == 0) {
+    Produit nouveau_produit; // Amène le typedef struct produit, pour un nouveau produit.
+    printf("Name :"); // Affiche nom.
+    scanf("%s", nouveau_produit.nom); // Récupère la réponse nom relié au typedef struct produit pour un nouveau produit.
+    printf("Price :"); // Affiche Prix.
+    scanf("%d", &nouveau_produit.prix); // Récupère la réponse prix relié au typedef struct produit pour un nouveau produit.
+    printf("Size :"); // Affcihe Taille.
+    scanf("%s", nouveau_produit.taille); // Récupère la réponse taille relié au typedef struct produit pour un nouveau produit.
+    scanf("%s", nouveau_produit.taille); // Récupère la réponse taille relié au typedef struct produit pour un nouveau produit.
+    scanf("%s", nouveau_produit.taille); // Récupère la réponse taille relié au typedef struct produit pour un nouveau produit.
+    printf("Quantity :"); // Affiche Quantité.
+    scanf("%d", &nouveau_produit.quantite); // Récupère la réponse quantité relié au typedef struct produit pour un nouveau produit.
+    printf("Refrence number :"); // Affiche numéro de référence.
+    scanf("%d", &nouveau_produit.ref); // Récupère la réponse ref relié au typedef struct produit pour un nouveau produit.
+    strcpy(nouveau_produit.typ, "men"); // Stocke le char typ "men" dans la variable nouveau_produit.typ grâce à la fonction strcpy.
+    
+    // Ouverture du fichier en mode écriture.
+    FILE *fichier_produit = fopen("produit.txt", "a");
+      
+      // Si le produit s'ouvre ..
+      if (fichier_produit != NULL) {
+        fprintf(fichier_produit, "%s %d %s %d %d %s\n", nouveau_produit.nom, nouveau_produit.prix, nouveau_produit.taille, nouveau_produit.quantite, nouveau_produit.ref, nouveau_produit.typ); // Écriture du nom, prix, taille, quantité, référence dans le fichier et men.
+        fclose(fichier_produit); // Fermeture du fichier.
+      }
+      
+      // Si le fichier ne s'ouvre pas ..
+      else {
+        printf("Error opening file produit.txt\n"); // Message d'erreur si le fichier ne s'ouvre pas.
+      }
+  }
+
+  // Si le parfums choisi est un parfums de femme.
+  else if (strcmp(type, "women's fragrance") == 0 || strcmp(type, "womens fragrance") == 0 || strcmp(type, "women") == 0 || strcmp(type, "womens") == 0) {
+    Produit nouveau_produit; // Amène le typedef struct produit, pour un nouveau produit.
+    printf("Name :"); // Affiche nom.
+    scanf("%s", nouveau_produit.nom); // Récupère la réponse nom relié au typedef struct produit pour un nouveau produit.
+    printf("Price :"); // Affiche Prix.
+    scanf("%d", &nouveau_produit.prix); // Récupère la réponse prix relié au typedef struct produit pour un nouveau produit.
+    printf("Size :"); // Affcihe Taille.
+    scanf("%s", nouveau_produit.taille); // Récupère la réponse taille relié au typedef struct produit pour un nouveau produit.
+    printf("Quantity :"); // Affiche Quantité.
+    scanf("%d", &nouveau_produit.quantite); // Récupère la réponse quantité relié au typedef struct produit pour un nouveau produit.
+    printf("Refrence number :"); // Affiche numéro de référence.
+    scanf("%d", &nouveau_produit.ref); // Récupère la réponse ref relié au typedef struct produit pour un nouveau produit.
+    strcpy(nouveau_produit.typ, "women"); // Stocke le char typ "men" dans la variable nouveau_produit.typ grâce à la fonction strcpy.
+
+    // Ouverture du fichier en mode écriture.
+    FILE *fichier_produit = fopen("produit.txt", "a");
+      
+      // Si le produit s'ouvre ..
+      if (fichier_produit != NULL) {
+        fprintf(fichier_produit, "%s %d %s %d %d %s\n", nouveau_produit.nom, nouveau_produit.prix, nouveau_produit.taille, nouveau_produit.quantite, nouveau_produit.ref, nouveau_produit.typ); // Écriture du nom, prix, taille, quantité, référence dans le fichier.
+        fclose(fichier_produit); // Fermeture du fichier.
+      }
+      
+      // Si le fichier ne s'ouvre pas ..
+      else {
+        printf("Error opening file produit.txt\n"); // Message d'erreur si le fichier ne s'ouvre pas.
+      }
+  }
+
+  // Si le parfums choisi est un parfums unisexe.
+  else if (strcmp(type, "unisexe") == 0 || strcmp(type, "unisex") == 0) {
+    Produit nouveau_produit; // Amène le typedef struct produit, pour un nouveau produit.
+    printf("Name :"); // Affiche nom.
+    scanf("%s", nouveau_produit.nom); // Récupère la réponse nom relié au typedef struct produit pour un nouveau produit.
+    printf("Price :"); // Affiche Prix.
+    scanf("%d", &nouveau_produit.prix); // Récupère la réponse prix relié au typedef struct produit pour un nouveau produit.
+    printf("Size :"); // Affcihe Taille.
+    scanf("%s", nouveau_produit.taille); // Récupère la réponse taille relié au typedef struct produit pour un nouveau produit.
+    printf("Quantity :"); // Affiche Quantité.
+    scanf("%d", &nouveau_produit.quantite); // Récupère la réponse quantité relié au typedef struct produit pour un nouveau produit.
+    printf("Refrence number :"); // Affiche numéro de référence.
+    scanf("%d", &nouveau_produit.ref); // Récupère la réponse ref relié au typedef struct produit pour un nouveau produit.
+    strcpy(nouveau_produit.typ, "unisexe"); // Stocke le char typ "men" dans la variable nouveau_produit.typ grâce à la fonction strcpy.
+ 
+    // Ouverture du fichier en mode écriture.
+    FILE *fichier_produit = fopen("produit.txt", "a");
+      
+      // Si le produit s'ouvre ..
+      if (fichier_produit != NULL) {
+        fprintf(fichier_produit, "%s %d %s %d %d %s\n", nouveau_produit.nom, nouveau_produit.prix, nouveau_produit.taille, nouveau_produit.quantite, nouveau_produit.ref, nouveau_produit.typ); // Écriture du nom, prix, taille, quantité, référence dans le fichier.
+        fclose(fichier_produit); // Fermeture du fichier.
+      }
+      
+      // Si le fichier ne s'ouvre pas ..
+      else {
+        printf("Error opening file produit.txt\n"); // Message d'erreur si le fichier ne s'ouvre pas.
+      }
+  }
+  
+  // Si l'utilisateur a fait une erreur de saisie.
+  else {
+    printf("\n"); // Esapce pour améliorer l'interface.
+    printf("Try again while using the followings: 'Mens Fragrance' or 'Womens Fragrance' or 'Unisexe'.\n"); // Demande à l'utilisateur de réessayer avec le bon orthographe.
+    printf("\n"); // Esapce pour améliorer l'interface.
+    AddProduit() ; // Amène la fonction pour redémarrer le programme à au choix 4.
+  }
+  return 0; // return 0.
+}
+
+
+
+
+
+
+
+// Fonction pour le choix 5 employee, pour modifier un produit.
+int ModifyProducts() {
+
+  char type[MAX_SIZE];
+  
+  printf("What do you want modify ?\n"); // Deamnde à l'utilisateur ce qu'il veut modifier.
+  printf("- Products\n"); // Affiche le choix Produits.
+  printf("- Clients\n"); // Affiche le choix Clients.
+  printf("\n"); // Espace pour améliorer l'interface.
+  scanf("%s" , type); // Récupère la réponse type.
+
+  // Si le cas choisi est client.
+  if (strcmp(type, "client") == 0 || strcmp(type, "clients") == 0) {
+    printf("\n"); // Espace pour améliorer l'interface.
+    printf("Not done\n"); // A MODIFIER
+  }
+
+  // Si le cas choisi est un produit.
+  else if (strcmp(type, "product") == 0 ||strcmp(type, "products") == 0) {
+    printf("\n"); // Espace pour améliorer l'interface.
+    printf("Not done\n"); // A MODIFIER
+  }
+
+  // Si l'utilisateur a fait une erreur de saisie.
+  else {
+    printf("Try again while the followings : 'product' or 'client'.\n"); // Demande à l'utilisateur de réessayer avec le bon orthographe.
+    ModifyProducts (); // Amène la fonction qui relance le programme à partir du choix de la modifcation de produits.
+  }
+  return 0; // return 0;
+}
+
+
+
+
+// Fonction pour le choix 6 employee, pour supprimer un produit.
+int DeleteProduit () {
+  
+  int delete;
+  int numeroLigne = 1;
+  char ligne[1000];
+  char type[MAX_SIZE];
+  
+  printf("Vous voulez supprimez un client ou un produit ?\n"); // Demande qu'est ce qu'il veut supprimer.
+  scanf("%s" , type); // Récupère la réponse type.
+
+  // Si le cas choisi est un client.
+  if (strcmp(type, "client") == 0 ) {
+    printf("\n"); // Espace pour améliorer l'interface.
+    printf("Quelle ligne ?\n"); // Demande quelle ligne l'utilisateur souhaite supprimer.
+    scanf("%d" , &delete); // Récupère la réponse delete, quelle ligne supprimer.
+
+      // Ouverture du fichier 1 principale en lecture et écriture.
+      FILE *clients = fopen("clients.txt", "r+");
+
+      // Ouverture du fichier temporaire en écriture.
+      FILE *temp = fopen("temp.txt", "w");
+
+    // Si un des deux fichier ne s'ouvre pas ..
+    if (clients == NULL || temp == NULL) {
+      printf("Erreur lors de l'ouverture du fichier.\n"); // Message d'erreur.
+      exit(1); // Fin du programme
+    }
+  
+    // COMPREND RIEN CHATGPT
+    while (fgets(ligne, sizeof(ligne), clients) != NULL) {
+    
+      // COMPREND RIEN CHATGPT
+      if (numeroLigne != delete) {
+        fputs(ligne, temp); // COMPREND R
+      }
+      numeroLigne++; // COMPREND RIEN CHATGPT
+    }
+    fclose(clients); // Ferme le fichier 1.
+    fclose(temp); // Ferme le fichier 2 temporaire.
+    remove("clients.txt"); // Supprime l'ancien avec ligne indésirable.
+    rename("temp.txt", "clients.txt"); // Renomme le nouveau fichier recopié sans la ligne indérisable comme l'ancien
+    printf("\n"); // Espace pour améliorer l'interface.
+    printf("La ligne a été supprimée avec succès.\n"); // Confirme que l'opération a fini avec succès.
+  }
+
+  // Si le cas choisi est un produit.
+  else if (strcmp(type, "produit") == 0) {
+    printf("\n"); // Espace pour améliorer l'interface.
+    printf("Quelle ligne ?\n"); // Demande quelle ligne l'utilisateur souhaite supprimer.
+    scanf("%d" , &delete); // Récupère la réponse delete, quelle ligne supprimer.
+
+      // Ouverture du fichier 1 principale en lecture et écriture.
+      FILE *produit = fopen("produit.txt", "r+");
+
+      // Ouverture du fichier temporaire en écriture.
+      FILE *temp = fopen("temp.txt", "w");
+
+    // Si un des deux fichier ne s'ouvre pas ..
+    if (produit == NULL || temp == NULL) {
+      printf("Erreur lors de l'ouverture du fichier.\n"); // Message d'erreur.
+      exit(1); // Fin du programme
+    }
+  
+    // COMPREND RIEN CHATGPT
+    while (fgets(ligne, sizeof(ligne), produit) != NULL) {
+    
+      // COMPREND RIEN CHATGPT
+      if (numeroLigne != delete) {
+        fputs(ligne, temp); // COMPREND R
+      }
+      numeroLigne++; // COMPREND RIEN CHATGPT
+    }
+    fclose(produit); // Ferme le fichier 1.
+    fclose(temp); // Ferme le fichier 2 temporaire.
+    remove("produit.txt"); // Supprime l'ancien avec ligne indésirable.
+    rename("temp.txt", "produit.txt"); // Renomme le nouveau fichier recopié sans la ligne indérisable comme l'ancien
+    printf("\n"); // Espace pour améliorer l'interface.
+    printf("La ligne a été supprimée avec succès.\n"); // Confirme que l'opération a fini avec succès.
+}
+
+  // Si l'utilisateur a fait une erreur de saisie.
+  else {
+    printf("Try again while the followings : 'client' or 'produit'.\n"); // Demande à l'utilisateur de réessayer avec le bon orthographe.
+    DeleteProduit () ;
+  }
+  return 0; // return 0.
+}
+
+
+
+
+int help () {
+  printf("Show some things to help !\n");
+}
+
+
+
+
+
+
+
+
+int main() {
+  
+  printf("Loading ...\n"); // Affiche chargement du programme.
+  sleep(1); // patiente 1 seconde juste pour réalisme, mais utilise la bibliothèque <unistd.h>.
+  printf("\n");// Esapce pour améliorer l'interface.
+  printf("Welcome to *Fragrance Store* !\n"); // Affiche bienvenue suivie de la marque de l'enseigne.
+  printf("\n");// Esapce pour améliorer l'interface.
+  EmployeeOrClient(); // Amène la fonction qui démarre le programme au début.
+  return 0; // return 0.
+}
